@@ -1,5 +1,7 @@
 package uz.zero.shopapp
 
+import io.swagger.v3.oas.models.OpenAPI
+import io.swagger.v3.oas.models.info.Info
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.context.annotation.Bean
@@ -7,7 +9,6 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 import org.springframework.web.servlet.AsyncHandlerInterceptor
-import org.springframework.web.servlet.config.annotation.EnableWebMvc
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 import org.springframework.web.servlet.i18n.SessionLocaleResolver
@@ -15,19 +16,16 @@ import org.springframework.web.servlet.support.RequestContextUtils
 import java.util.Locale
 
 
-
-
 //@EnableMongoAuditing
 //@Configuration
 //class EntityMongoAuditingConfig {
 //    @Bean
-//    fun userIdAuditorAware() = AuditorAware { Optional.ofNullable(SecurityContextHolder.getContext().getUserName()) }
+//    fun userIdAuditorAware() = AuditorAware { ofNullable(SecurityContextHolder.getContext().getUserName()) }
 //}
 
 
 
 @Configuration
-@EnableWebMvc
 class WebMvcConfig : WebMvcConfigurer {
 
     @Bean
@@ -46,5 +44,18 @@ class WebMvcConfig : WebMvcConfigurer {
                 return true
             }
         })
+    }
+}
+
+
+@Configuration
+class SwaggerConfig {
+
+    @Bean
+    fun customOpenAPI(): OpenAPI {
+        return OpenAPI()
+            .info(Info()
+                .title("Shop App API")
+                .description("Shop Application REST API Documentation"))
     }
 }

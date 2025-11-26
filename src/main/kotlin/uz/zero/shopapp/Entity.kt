@@ -19,6 +19,7 @@ import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedBy
 import org.springframework.data.annotation.LastModifiedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
+import java.math.BigDecimal
 import java.util.Date
 
 @MappedSuperclass
@@ -47,6 +48,44 @@ class Product(
     var count: Long,
     @ManyToOne var category: Category,
 ) : BaseEntity()
+
+@Entity
+class User(
+    var fullname: String,
+    @Column(unique = true)
+    var username: String,
+    var balance: BigDecimal = BigDecimal.ZERO
+) : BaseEntity()
+
+@Entity
+class Transaction(
+    @ManyToOne
+    var user: User,
+    @Column(name = "total_amount")
+    var totalAmount: BigDecimal,
+    var date: Date = Date()
+) : BaseEntity()
+
+@Entity
+class TransactionItem(
+    @ManyToOne
+    var product: Product,
+    var count: Long,
+    var amount: BigDecimal,
+    @Column(name = "total_amount")
+    var totalAmount: BigDecimal,
+    @ManyToOne
+    var transaction: Transaction
+) : BaseEntity()
+
+@Entity
+class UserPaymentTransaction(
+    @ManyToOne
+    var user: User,
+    var amount: BigDecimal,
+    var date: Date = Date()
+) : BaseEntity()
+
 
 
 

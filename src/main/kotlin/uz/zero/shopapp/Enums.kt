@@ -4,4 +4,12 @@ package uz.zero.shopapp
 
 enum class ErrorCode(val code: Int) {
     CATEGORY_NOT_FOUND(200),
+    USER_NOT_FOUND(201),
+    USER_ALREADY_EXISTS(202),
+    PRODUCT_NOT_FOUND(203),
+    TRANSACTION_NOT_FOUND(204),
+    INSUFFICIENT_BALANCE(205),
+    INSUFFICIENT_PRODUCT(206),
+    INVALID_AMOUNT(207),
+
 }
