@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletResponse
 import org.springframework.context.annotation.Bean
 
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.support.ResourceBundleMessageSource
 
 import org.springframework.web.servlet.AsyncHandlerInterceptor
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry
@@ -32,6 +33,11 @@ class WebMvcConfig : WebMvcConfigurer {
     fun localeResolver() = SessionLocaleResolver().apply {
         setDefaultLocale(Locale("uz"))
     }
+    @Bean
+    fun errorMessageSource() = ResourceBundleMessageSource().apply {
+        setDefaultEncoding(Charsets.UTF_8.name())
+        setBasename("error")
+    }
 
     override fun addInterceptors(registry: InterceptorRegistry) {
         registry.addInterceptor(object : AsyncHandlerInterceptor {
@@ -47,15 +53,15 @@ class WebMvcConfig : WebMvcConfigurer {
     }
 }
 
-
-@Configuration
-class SwaggerConfig {
-
-    @Bean
-    fun customOpenAPI(): OpenAPI {
-        return OpenAPI()
-            .info(Info()
-                .title("Shop App API")
-                .description("Shop Application REST API Documentation"))
-    }
-}
+//
+//@Configuration
+//class SwaggerConfig {
+//
+//    @Bean
+//    fun customOpenAPI(): OpenAPI {
+//        return OpenAPI()
+//            .info(Info()
+//                .title("Shop App API")
+//                .description("Shop Application REST API Documentation"))
+//    }
+//}

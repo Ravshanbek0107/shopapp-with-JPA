@@ -1,7 +1,6 @@
 package uz.zero.shopapp
 
 
-
 enum class ErrorCode(val code: Int) {
     USER_NOT_FOUND(100),
     USER_ALREADY_EXISTS(101),
