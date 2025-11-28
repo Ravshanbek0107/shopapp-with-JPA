@@ -4,11 +4,14 @@ import jakarta.persistence.Column
 import jakarta.persistence.Embeddable
 import jakarta.persistence.Entity
 import jakarta.persistence.EntityListeners
+import jakarta.persistence.FetchType
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
+import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.MappedSuperclass
+import jakarta.persistence.Table
 import jakarta.persistence.Temporal
 import jakarta.persistence.TemporalType
 import jakarta.persistence.Transient
@@ -35,55 +38,55 @@ class BaseEntity(
 
 
 @Entity
+@Table(name = "categories")
 class Category(
-    var name: String,
-    @Column(name = "orders") var order: Long,
-    var description: String,
+    @Column(nullable = false) var name: String,
+    @Column(name = "orders" , nullable = false) var order: Long,
 ) : BaseEntity()
 
 
 @Entity
+@Table(name = "products")
 class Product(
-    var name: LocalizedName,
-    var count: Long,
-    @ManyToOne var category: Category,
+    @Column(nullable = false) var name: LocalizedName,
+    @Column(nullable = false) var count: Long,
+    @Column(nullable = false) var amount: BigDecimal,
+    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "category_id", nullable = false) var category: Category,
 ) : BaseEntity()
 
 @Entity
+@Table(name = "users")
 class User(
-    var fullname: String,
-    @Column(unique = true)
-    var username: String,
-    var balance: BigDecimal = BigDecimal.ZERO
+    @Column(nullable = false) var fullname: String,
+    @Column(unique = true, nullable = false) var username: String,
+    @Column(nullable = false) var balance: BigDecimal = BigDecimal.ZERO
 ) : BaseEntity()
 
 @Entity
+@Table(name = "transactions")
 class Transaction(
-    @ManyToOne
-    var user: User,
-    @Column(name = "total_amount")
-    var totalAmount: BigDecimal,
-    var date: Date = Date()
+    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "user_id", nullable = false) var user: User,
+    @Column(name = "total_amount", nullable = false) var totalAmount: BigDecimal,
+    @Temporal(TemporalType.TIMESTAMP) @Column(nullable = false)var date: Date = Date()
 ) : BaseEntity()
 
 @Entity
+@Table(name = "transaction_items")
 class TransactionItem(
-    @ManyToOne
-    var product: Product,
-    var count: Long,
-    var amount: BigDecimal,
-    @Column(name = "total_amount")
-    var totalAmount: BigDecimal,
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "product_id", nullable = false) var product: Product,
+    @Column(nullable = false)var count: Long,
+    @Column(nullable = false)var amount: BigDecimal,
+    @Column(name = "total_amount", nullable = false) var totalAmount: BigDecimal,
+    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "transaction_id", nullable = false)
     var transaction: Transaction
 ) : BaseEntity()
 
 @Entity
+@Table(name = "user_payment_transactions")
 class UserPaymentTransaction(
-    @ManyToOne
-    var user: User,
-    var amount: BigDecimal,
-    var date: Date = Date()
+    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "user_id", nullable = false) var user: User,
+    @Column(nullable = false) var amount: BigDecimal,
+    @Temporal(TemporalType.TIMESTAMP) @Column(nullable = false) var date: Date = Date()
 ) : BaseEntity()
 
 

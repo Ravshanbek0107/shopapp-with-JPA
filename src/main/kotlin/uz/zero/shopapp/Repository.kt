@@ -56,43 +56,21 @@ interface UserRepository : BaseRepository<User> {
 
 @Repository
 interface TransactionRepository : BaseRepository<Transaction> {
-    fun findByUserIdAndDeletedFalse(userId: Long): List<Transaction>
-    fun findByDeletedFalseOrderByDateDesc(): List<Transaction>
 
-// to admin
-    fun findAllByOrderByDateDesc(): List<Transaction>
 }
 
 @Repository
 interface UserPaymentTransactionRepository : BaseRepository<UserPaymentTransaction> {
-    fun findByUserId(userId: Long): List<UserPaymentTransaction>
-    fun findAllByOrderByDateDesc(): List<UserPaymentTransaction>
+
 }
 
 @Repository
 interface CategoryRepository : BaseRepository<Category> {}
 
+
+
 @Repository
 interface ProductRepository : BaseRepository<Product> {
-    @Query("""
-        SELECT p FROM Product p 
-        WHERE (LOWER(p.name.uz) LIKE LOWER(CONCAT('%', :keyword, '%')) 
-            OR LOWER(p.name.ru) LIKE LOWER(CONCAT('%', :keyword, '%'))
-            OR LOWER(p.name.en) LIKE LOWER(CONCAT('%', :keyword, '%')))
-        AND p.count > 0 
-        AND p.deleted = false
-    """)
-    fun searchAvailableProducts(@Param("keyword") keyword: String): List<Product>
-
-    @Query("""
-        SELECT p FROM Product p 
-        WHERE p.category.id =: categoryId 
-        AND p.count > 0 
-        AND p.deleted = false
-    """)
-    fun findAvailableProductsByCategory(@Param("categoryId") categoryId: Long): List<Product>
-
-    fun findByCountGreaterThanAndDeletedFalse(minCount: Long): List<Product>
 
 }
 
@@ -100,8 +78,4 @@ interface ProductRepository : BaseRepository<Product> {
 @Repository
 interface TransactionItemRepository : BaseRepository<TransactionItem> {
 
-    fun findByTransactionId(transactionId: Long): List<TransactionItem>
-
-    @Query("SELECT ti FROM TransactionItem ti WHERE ti.transaction.user.id = :userId")
-    fun findByTransactionUserId(@Param("userId") userId: Long): List<TransactionItem>
 }

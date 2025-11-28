@@ -9,32 +9,66 @@ data class BaseMessage(val code: Int? = null, val message: String? = null) {
     }
 }
 
-data class CategoryRequest(
+data class LocalizedNameRequest(
+    val uz: String,
+    val ru: String,
+    val en: String
+)
+
+data class LocalizedNameResponse(
+    val uz: String,
+    val ru: String,
+    val en: String
+)
+
+data class CategoryCreateRequest(
     val name: String,
     val description: String,
     val order: Long,
 )
 
+data class CategoryUpdateRequest(
+    val name: String?,
+    val order: Long?,
+)
+
 data class CategoryResponse(
     var id: Long,
     val name: String,
-    val description: String,
     val order: Long,
 ){
     companion object {
-        fun toAdminResponse(category: Category) = run {
-            CategoryResponse(category.id!!,
+        fun toResponse(category: Category) = run {
+            CategoryResponse(
+                category.id!!,
                 category.name,
-                category.description,
-                category.order)
+                category.order
+            )
         }
     }
 }
+
+data class ProductCreateRequest(
+    val name: LocalizedNameRequest,
+    val description: String,
+    val count: Long,
+    val amount : BigDecimal,
+    val categoryId: Long
+)
+
+data class ProductUpdateRequest(
+    val name: LocalizedNameRequest?,
+    val description: String?,
+    val count: Long?,
+    val amount: BigDecimal?,
+    val categoryId: Long?
+)
 
 data class ProductResponse(
     var id: Long,
     val name: String,
     val count: Long,
+    val amount: BigDecimal,
     val category: CategoryResponse
 ) {
     companion object {
@@ -42,12 +76,13 @@ data class ProductResponse(
             id = product.id!!,
             name = product.name.localized(),
             count = product.count,
-            category = CategoryResponse.toAdminResponse(product.category)
+            amount = product.amount,
+            category = CategoryResponse.toResponse(product.category)
         )
     }
 }
 
-data class UserRequest(
+data class UserCreateRequest(
     val fullname: String,
     val username: String
 )
@@ -76,24 +111,58 @@ data class UserPaymentRequest(
 data class UserPaymentResponse(
     val id: Long,
     val userId: Long,
-    val amount: BigDecimal,
+    val newBalance: BigDecimal,
     val date: Date
 ) {
     companion object {
         fun toResponse(payment: UserPaymentTransaction) = UserPaymentResponse(
             id = payment.id!!,
             userId = payment.user.id!!,
-            amount = payment.amount,
+            newBalance = payment.amount,
             date = payment.date
         )
     }
 }
+
+data class UserPaymentHistoryResponse(
+    val id: Long,
+    val userId: Long,
+    val amount: BigDecimal,
+    val date: Date
+){
+    companion object {
+        fun toResponse(history: UserPaymentTransaction) = UserPaymentHistoryResponse(
+            id = history.id!!,
+            userId = history.user.id!!,
+            amount = history.amount,
+            date = history.date
+        )
+    }
+}
+
+data class UserBuyHistoryResponse(
+    val transactionId: Long,
+    val totalAmount: BigDecimal,
+    val date: Date,
+    val items: List<TransactionItemResponse>
+) {
+    companion object {
+        fun toResponse(transaction: Transaction, items: List<TransactionItem>) = UserBuyHistoryResponse(
+            transactionId = transaction.id!!,
+            totalAmount = transaction.totalAmount,
+            date = transaction.date,
+            items = items.map { TransactionItemResponse.toResponse(it) }
+        )
+    }
+}
+
 
 data class BuyItemRequest(
     val productId: Long,
     val count: Long,
     val amount: BigDecimal
 )
+
 
 data class BuyRequest(
     val userId: Long,
@@ -105,7 +174,7 @@ data class BuyResponse(
     val userId: Long,
     val totalAmount: BigDecimal,
     val date: Date,
-    val items: List<BuyItemResponse>
+    val items: List<TransactionItemResponse>
 ) {
     companion object {
         fun toResponse(transaction: Transaction, items: List<TransactionItem>) = BuyResponse(
@@ -113,43 +182,7 @@ data class BuyResponse(
             userId = transaction.user.id!!,
             totalAmount = transaction.totalAmount,
             date = transaction.date,
-            items = items.map { BuyItemResponse.toResponse(it) }
-        )
-    }
-}
-
-data class BuyItemResponse(
-    val productId: Long,
-    val productName: String,
-    val count: Long,
-    val amount: BigDecimal,
-    val totalAmount: BigDecimal
-) {
-    companion object {
-        fun toResponse(item: TransactionItem) = BuyItemResponse(
-            productId = item.product.id!!,
-            productName = item.product.name.localized(),
-            count = item.count,
-            amount = item.amount,
-            totalAmount = item.totalAmount
-        )
-    }
-}
-
-data class TransactionResponse(
-    val id: Long,
-    val userId: Long,
-    val userName: String,
-    val totalAmount: BigDecimal,
-    val date: Date
-) {
-    companion object {
-        fun toResponse(transaction: Transaction) = TransactionResponse(
-            id = transaction.id!!,
-            userId = transaction.user.id!!,
-            userName = transaction.user.fullname,
-            totalAmount = transaction.totalAmount,
-            date = transaction.date
+            items = items.map { TransactionItemResponse.toResponse(it) }
         )
     }
 }
@@ -172,20 +205,9 @@ data class TransactionItemResponse(
     }
 }
 
-data class CheckBalanceRequest(
-    val requiredAmount: BigDecimal
+data class AllTransactionsResponse(
+    val transactionId: Long,
+    val user: UserResponse,
+    val totalAmount: BigDecimal,
+    val date: Date
 )
-
-data class CheckBalanceResponse(
-    val hasEnoughBalance: Boolean,
-    val currentBalance: BigDecimal,
-    val requiredAmount: BigDecimal
-) {
-    companion object {
-        fun toResponse(hasEnough: Boolean, current: BigDecimal, required: BigDecimal) = CheckBalanceResponse(
-            hasEnoughBalance = hasEnough,
-            currentBalance = current,
-            requiredAmount = required
-        )
-    }
-}

@@ -64,6 +64,23 @@ class UserAlreadyExistsException : ShopAppException() {
     override fun errorType() = ErrorCode.USER_ALREADY_EXISTS
 }
 
+class InvalidFullnameException : ShopAppException() {
+    override fun errorType() = ErrorCode.INVALID_FULLNAME_EXCEPTION
+}
+class InvalidUsernameException : ShopAppException() {
+    override fun errorType() = ErrorCode.INVALID_USERNAME_EXCEPTION
+}
+
+class InvalidCategoryNameException : ShopAppException() {
+    override fun errorType() = ErrorCode.INVALID_CATEGORYNAME_EXCEPTION
+}
+class InvalidOrderException : ShopAppException() {
+    override fun errorType() = ErrorCode.INVALID_ORDER_EXCEPTION
+}
+class InvalidLocalizedNameException : ShopAppException() {
+    override fun errorType() = ErrorCode.INVALID_LOCALIZEDNAME_EXCEPTION
+}
+
 class ProductNotFoundException : ShopAppException() {
     override fun errorType() = ErrorCode.PRODUCT_NOT_FOUND
 }
