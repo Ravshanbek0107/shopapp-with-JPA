@@ -17,7 +17,7 @@ class UserServiceImpl(
 
     override fun createUser(request: UserCreateRequest): UserResponse {
         if (request.fullname.isBlank()) throw InvalidFullnameException()
-        if (request.username.isBlank() || request.username.length <= 3) throw InvalidUsernameException()
+        if (request.username.isBlank() || request.username.length < 3) throw InvalidUsernameException()
 
         if (userRepository.existsByUsername(request.username)) {
             throw UserAlreadyExistsException()
@@ -254,7 +254,7 @@ class TransactionServiceImpl(
         var totalAmount = BigDecimal.ZERO
 
         for (item in buyRequest.items) {
-            if (item.count <= 0) throw InvalidAmountException()
+            if (item.count < 0) throw InvalidAmountException()
 
             val product = productRepository.findByIdAndDeletedFalse(item.productId) ?: throw ProductNotFoundException()
 

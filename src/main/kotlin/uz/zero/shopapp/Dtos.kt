@@ -50,7 +50,6 @@ data class CategoryResponse(
 
 data class ProductCreateRequest(
     val name: LocalizedNameRequest,
-    val description: String,
     val count: Long,
     val amount : BigDecimal,
     val categoryId: Long
@@ -58,7 +57,6 @@ data class ProductCreateRequest(
 
 data class ProductUpdateRequest(
     val name: LocalizedNameRequest?,
-    val description: String?,
     val count: Long?,
     val amount: BigDecimal?,
     val categoryId: Long?
@@ -160,7 +158,6 @@ data class UserBuyHistoryResponse(
 data class BuyItemRequest(
     val productId: Long,
     val count: Long,
-    val amount: BigDecimal
 )
 
 
